@@ -27,6 +27,7 @@ namespace EcommerceMVC.Controllers
             {
                 db.Categories.Add(cat);
                 db.SaveChanges();
+                TempData["success"] = "Category added successfully";
                 return RedirectToAction("Index");
             }
             return View();
@@ -68,6 +69,40 @@ namespace EcommerceMVC.Controllers
             else
             {
                 return View();
+            }
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            Category? catFromDB = db.Categories.Where(x => x.ID == id).FirstOrDefault();
+            if (catFromDB == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return View(catFromDB);
+            }
+        }
+        [HttpPost, ActionName("Delete")] // Must show that the next action a delete action despite different name i.e DeleteCategory which is used so
+                                         // that it will not interface with the default Delete of the action above
+        public IActionResult DeleteCategory(int? id)
+        {
+            Category? catFromDB = db.Categories.Find(id);
+            if (catFromDB == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                db.Categories.Remove(catFromDB);
+                db.SaveChanges();
+                TempData["success"] = "Category deleted successfully";
+                return RedirectToAction("Index");
             }
         }
     }
