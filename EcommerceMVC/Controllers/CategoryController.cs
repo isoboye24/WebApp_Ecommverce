@@ -20,5 +20,55 @@ namespace EcommerceMVC.Controllers
         {           
             return View();
         }
+        [HttpPost]
+        public IActionResult Create(Category cat)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Categories.Add(cat);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }            
+            Category? catFromDB = db.Categories.Where(x => x.ID == id).FirstOrDefault();
+            if (catFromDB == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return View(catFromDB);
+            }
+        }
+        [HttpPost]
+        public IActionResult Edit(Category cat)
+        {
+            if (cat.Name == cat.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name", "The Display order cannot exactly match the name.");
+            }
+            if (cat.Name != null && cat.Name.ToLower() == "test")
+            {
+                ModelState.AddModelError("", "Test is an invalid value");
+            }
+            if (ModelState.IsValid)
+            {
+                db.Categories.Update(cat);
+                db.SaveChanges();
+                TempData["success"] = "Category updated successfully";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
+        }
     }
 }
