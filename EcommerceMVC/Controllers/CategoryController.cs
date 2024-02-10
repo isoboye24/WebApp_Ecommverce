@@ -16,5 +16,9 @@ namespace EcommerceMVC.Controllers
             List<Category> categoryList = db.Categories.ToList();
             return View(categoryList);
         }
+        public IActionResult Create()
+        {           
+            return View();
+        }
     }
 }
